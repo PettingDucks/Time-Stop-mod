@@ -1,0 +1,11 @@
+# build output and IDE files (can contain local paths)
+bin/
+obj/
+.vs/
+.vscode/
+*.csproj.user
+*.user
+Properties/launchSettings.json
+
+# built mods: keep these out of the repo
+*.tmod

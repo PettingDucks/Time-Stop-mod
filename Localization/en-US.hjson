@@ -1,0 +1,130 @@
+Mods: {
+	TimeStop: {
+		Items: {
+			ChronoWatch: {
+				DisplayName: Orion's Half
+				Tooltip: "'Thunder sealed in glass. Strike, and the hour forgets to fall.'"
+			}
+		}
+
+		Keybinds.ToggleTimeStop.DisplayName: Toggle time stop (needs Orion's Half in your inventory)
+
+		Configs: {
+			TimeStopConfig: {
+				DisplayName: Time Stop
+
+				TankSeconds: {
+					Label: Time tank outside boss fights (seconds)
+					Tooltip: Stopped time works like fuel. A full tank holds this many seconds; time breaks on its own when it runs dry
+				}
+
+				BossTankSeconds: {
+					Label: Time tank during boss fights (seconds)
+					Tooltip: While any boss is alive the tank only holds this much. When the boss is gone it goes back to the normal size and refills
+				}
+
+				RefillSpeed: {
+					Label: Refill speed
+					Tooltip: How fast the tank refills while time flows, compared to how fast it drains. 0.8 means 80% of the drain speed
+				}
+
+				StopCooldownSeconds: {
+					Label: Cooldown between stops (seconds)
+					Tooltip: Fixed wait after every time stop before the next one. Cutscene and Nameless Deity breaks skip it
+				}
+
+				StoredDamage: {
+					Label: Stored damage
+					Tooltip: Hits on frozen enemies only chip them. All the damage is stored and lands at once when time resumes
+				}
+
+				FrozenBossDamage: {
+					Label: Damage to frozen bosses
+					Tooltip: Multiplier on damage dealt to frozen bosses and their body parts. 0.5 is half damage
+				}
+
+				StrainEnabled: {
+					Label: Strain (spam damage)
+					Tooltip:
+						'''
+						Starting time stops again as fast as possible after quick taps cracks the screen. Normal use never does
+						Eight max-speed taps in a row shatter it: locked out for 4 seconds and 30% of the tank is lost
+						'''
+				}
+
+				FreezeBosses: {
+					Label: Freeze bosses
+					Tooltip: If off, bosses and their body parts keep moving during a time stop
+				}
+
+				FreezeTownNPCs: {
+					Label: Freeze town NPCs
+					Tooltip: If off, town NPCs keep walking around during a time stop
+				}
+
+				FreezeDroppedItems: {
+					Label: Freeze dropped items
+					Tooltip: Dropped items hang in place. You can still pick them up
+				}
+
+				FreezeLiquids: {
+					Label: Freeze liquids
+					Tooltip: Water, lava, honey and shimmer stop flowing
+				}
+
+				AllowTestCommands: {
+					Label: Allow test commands
+					Tooltip: Enables /chronowatch, /tsspawn, /tsduration, /tscooldown, /tsready, /tsstop, /tsbreak, /tsstatus and /tssound. Turn off for a normal playthrough
+				}
+
+				ExemptNPCs: {
+					Label: NPCs that never freeze
+					Tooltip: Add any NPC here if freezing it causes problems
+				}
+			}
+
+			TimeStopClientConfig: {
+				DisplayName: Time Stop (visuals)
+
+				ShowOverlay: {
+					Label: Glass pane and shatter effects
+					Tooltip: The glass over the whole screen (interface included) while time is stopped, and the glass breaking when it resumes. Visual only; clicking works normally
+				}
+
+				ShowTimer: {
+					Label: Show Orion medallion
+					Tooltip: The medallion at the top of the screen. Its stars go out and its ring drains as the time stop runs down
+				}
+
+				TimeStopSoundVolume: {
+					Label: Time stop sound volume (%)
+					Tooltip: Volume of the charge-and-shutter sound when time stops (one of 14, picked at random). 0 turns it off
+				}
+
+				GlassSoundVolume: {
+					Label: Glass sound volume (%)
+					Tooltip: Volume of the glass breaking sound when time resumes. 0 turns it off
+				}
+
+				ReduceFlashing: {
+					Label: Reduce flashing
+					Tooltip: Softens white flashes, replaces colour inversions with a gentle dim, and reduces screen shake. Only affects you
+				}
+
+				CracksShowInterface: {
+					Label: Cracks show the interface
+					Tooltip: The strain cracks show your whole screen rotated, hotbar and map included. Turn off if it costs too much performance while cracks are visible
+				}
+
+				PauseScenery: {
+					Label: Pause scenery
+					Tooltip:
+						'''
+						Pauses skies, shader animation, swaying grass, tile animation, waterfalls, gore and wind while time is stopped
+						Some animated weapon and armor effects pause too. Turn off if that bothers you
+						'''
+				}
+			}
+		}
+	}
+}

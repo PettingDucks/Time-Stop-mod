@@ -1,0 +1,13 @@
+Adds Orion's Half, a pocket watch that stops time for everything except players.
+
+While time is stopped:
+- Enemies, bosses, town NPCs and critters freeze in place and cannot hurt you
+- Enemy projectiles hang in the air and cannot hurt you
+- Your own weapons, minions, building, mining and placing all work normally, so you can attack frozen enemies
+- The clock, weather, events, liquids, grass growth, falling sand, dropped items, scenery and enemy spawns are paused
+
+Hits on frozen enemies are stored and land all at once when time resumes; frozen bosses take reduced damage. Use it again to resume time. Time also resumes on its own after a limit (10 seconds by default), followed by a recharge. Both are changeable in the mod config.
+
+With Calamity: crafted after the Devourer of Gods from a Gold or Platinum Watch, 12 Cosmilite Bars, 10 Darksun Fragments, 10 Nightmare Fuel, 10 Endothermic Energy, 4 Ascendant Spirit Essence and 3 Twisting Nether at a Cosmic Anvil. Without Calamity it is a post-Moon Lord item.
+
+With Wrath of the Gods: there is one being that time does not apply to.

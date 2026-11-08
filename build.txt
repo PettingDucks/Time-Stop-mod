@@ -1,0 +1,4 @@
+displayName = Time Stop
+author = Local
+version = 1.0
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*, .gitignore, .gitattributes, *.md
