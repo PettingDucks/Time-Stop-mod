@@ -30,7 +30,7 @@ Visuals:
 
 ## How to install
 
-1. Download `TimeStop.tmod` from the [Releases](../../releases) page.
+1. **[Download TimeStop.tmod](https://github.com/PettingDucks/Time-Stop-mod/releases/latest/download/TimeStop.tmod)** (latest version). Older versions are on the [Releases](../../releases) page.
 2. Put it in your tModLoader `Mods` folder:
    - Windows: `Documents\My Games\Terraria\tModLoader\Mods`
    - Linux: `~/.local/share/Terraria/tModLoader/Mods`
