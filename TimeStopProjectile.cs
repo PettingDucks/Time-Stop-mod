@@ -48,9 +48,10 @@ namespace TimeStop
 					switch (parent.Entity) {
 						case Player:
 							return true;
-						// The Nameless Deity's attacks ignore stopped time like he does.
-						case NPC npc:
-							return NamelessDeityCompat.IsNameless(npc);
+						// Anything an NPC fires belongs to the world, the Nameless Deity's attacks included: they freeze
+						// while he alone keeps moving, until he breaks the stop.
+						case NPC:
+							return false;
 						case Projectile parentProjectile:
 							// Split bullets, explosions and minion shots inherit from what spawned them.
 							return IsPlayerMade(parentProjectile);

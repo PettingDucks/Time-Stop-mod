@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -50,9 +51,63 @@ namespace TimeStop
 		[Slider]
 		public float FrozenBossDamage;
 
+		// How long the Nameless Deity lets a time stop hold (everything but him frozen) before he breaks it.
+		[DefaultValue(0.5f)]
+		[Range(0.1f, 0.5f)]
+		[Increment(0.05f)]
+		[Slider]
+		public float NamelessBreakSeconds;
+
 		// Spamming time stops as fast as possible cracks the screen, and too much shatters it (4 s lockout, fuel lost).
 		[DefaultValue(true)]
 		public bool StrainEnabled;
+
+		// A restart counts as spam if the previous stop lasted at most this long...
+		[DefaultValue(1f)]
+		[Range(0.1f, 5f)]
+		[Increment(0.1f)]
+		[Slider]
+		public float StrainQuickTapSeconds;
+
+		// ...and the new one started within this long after the cooldown ended.
+		[DefaultValue(0.4f)]
+		[Range(0.05f, 3f)]
+		[Increment(0.05f)]
+		[Slider]
+		public float StrainSpamWindowSeconds;
+
+		// Spam restarts in a row before the screen shatters.
+		[DefaultValue(6)]
+		[Range(2, 20)]
+		[Slider]
+		public int StrainShatterAt;
+
+		// Strain starts healing this long after the last spam...
+		[DefaultValue(2f)]
+		[Range(0f, 10f)]
+		[Increment(0.5f)]
+		[Slider]
+		public float StrainHealDelaySeconds;
+
+		// ...and then heals this many cracks per second.
+		[DefaultValue(0.5f)]
+		[Range(0.1f, 5f)]
+		[Increment(0.1f)]
+		[Slider]
+		public float StrainHealPerSecond;
+
+		// Locked out of stopping time for this long after shattering.
+		[DefaultValue(4f)]
+		[Range(1f, 30f)]
+		[Increment(0.5f)]
+		[Slider]
+		public float StrainLockoutSeconds;
+
+		// Share of the time tank lost when the screen shatters.
+		[DefaultValue(30)]
+		[Range(0, 100)]
+		[Slider]
+		public int StrainFuelLossPercent;
 
 		[DefaultValue(true)]
 		public bool FreezeBosses;
@@ -76,6 +131,12 @@ namespace TimeStop
 		internal HashSet<int> ExemptTypes = new();
 
 		public override void OnChanged() {
+			StrainMeter.Settings.QuickTapTicks = (int)Math.Round(StrainQuickTapSeconds * 60f);
+			StrainMeter.Settings.SpamWindowTicks = (int)Math.Round(StrainSpamWindowSeconds * 60f);
+			StrainMeter.Settings.OverloadAt = StrainShatterAt;
+			StrainMeter.Settings.HoldTicks = (int)Math.Round(StrainHealDelaySeconds * 60f);
+			StrainMeter.Settings.DecayPerTick = StrainHealPerSecond / 60f;
+
 			ExemptTypes = new HashSet<int>(ExemptNPCs
 				.Where(definition => definition != null && !definition.IsUnloaded)
 				.Select(definition => definition.Type));

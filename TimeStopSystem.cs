@@ -86,7 +86,8 @@ namespace TimeStop
 		public static float StrainValueOf(int who) => strains[who].Value;
 		public static int LocalLockoutTicks => Main.netMode == NetmodeID.MultiplayerClient ? localLockout : lockouts[Main.myPlayer];
 
-		private const int FractureLockoutTicks = 240;     // 4 seconds, for that player only
+		// lockout after shattering, for that player only (config)
+		private static int FractureLockoutTicks => (int)Math.Round(TimeStopConfig.Get.StrainLockoutSeconds * 60f);
 
 		private static void TickStrain() {
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -107,6 +108,12 @@ namespace TimeStop
 		private static void Fracture(int who) {
 			strains[who].Reset();
 			lockouts[who] = FractureLockoutTicks;
+			// shattering costs part of the time tank (config)
+			float loss = tank.Max * TimeStopConfig.Get.StrainFuelLossPercent / 100f;
+			if (loss > 0f) {
+				tank.Fuel = Math.Max(0f, tank.Fuel - loss);
+				SyncQuietly();
+			}
 			SendStrain(who, fractured: true);
 			if (Main.netMode != NetmodeID.Server && who == Main.myPlayer)
 				PlayFractureEffects();
@@ -152,17 +159,19 @@ namespace TimeStop
 			if (Active)
 				activeTicks++;
 
-			if (Active && CutsceneCompat.CutsceneActive()) {
+			if (Active && CutsceneCompat.CutsceneActive(out string cutscene)) {
 				// Cutscenes run on their own clock, so let time flow again before anything falls out of step.
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
 					if (!endRequestSent) {
 						endRequestSent = true;
+						ModContent.GetInstance<TimeStop>().Logger.Info($"Ending the time stop for a cutscene ({cutscene})");
 						ModPacket packet = ModContent.GetInstance<TimeStop>().GetPacket();
 						packet.Write((byte)TimeStop.PacketType.RequestEnd);
 						packet.Send();
 					}
 				}
 				else {
+					ModContent.GetInstance<TimeStop>().Logger.Info($"Ending the time stop for a cutscene ({cutscene})");
 					EndForCutscene();
 					return;
 				}
@@ -170,8 +179,9 @@ namespace TimeStop
 
 			if (Active) {
 				if (NamelessDeityCompat.NamelessPresent()) {
+					// he lets the stop happen, then forces his way in
 					CrackTicks++;
-					if (CrackTicks == 1)
+					if (CrackTicks == NamelessDeityCompat.CrackStart)
 						ShatterEffect.BeginCracks();
 
 					if (CrackTicks >= NamelessDeityCompat.BreakDelay && Main.netMode != NetmodeID.MultiplayerClient) {
@@ -251,7 +261,9 @@ namespace TimeStop
 				return;
 
 			// Strain only builds from starting again as fast as possible after a quick tap, and only for that player.
-			if (TimeStopConfig.Get.StrainEnabled) {
+			// Trying again right after the Nameless Deity broke the last stop is never strain: spam him all you like.
+			bool afterDeityBreak = LastStopShattered && NamelessDeityCompat.NamelessPresent();
+			if (TimeStopConfig.Get.StrainEnabled && !afterDeityBreak) {
 				int sinceEnd = (int)Math.Min(int.MaxValue, Main.GameUpdateCount - lastEndTick);
 				float before = strains[who].Value;
 				bool overload = strains[who].RegisterStart(sinceEnd, lastStopTicks, (int)Math.Round(CooldownSeconds * 60f));
@@ -309,8 +321,12 @@ namespace TimeStop
 				tank.Ended((int)Math.Round(CooldownSeconds * 60f));
 			OnStateChanged();
 
-			if (shattered && NamelessDeityCompat.NamelessPresent())
-				Broadcast("The Nameless Deity shatters your stopped time.", new Color(255, 215, 120));
+			// He speaks now and then (a random line, on a cooldown), not on every break.
+			if (shattered && NamelessDeityCompat.NamelessPresent()) {
+				string line = NamelessDeityCompat.TakeLine();
+				if (line != null)
+					Broadcast(line, new Color(255, 215, 120));
+			}
 		}
 
 		// ---------- Test command entry points (server or single player) ----------
@@ -478,7 +494,8 @@ namespace TimeStop
 
 			if (Active) {
 				// 0 to 1 while the Nameless Deity is breaking the time stop.
-				float crack = CrackTicks / (float)NamelessDeityCompat.BreakDelay;
+				float crack = MathHelper.Clamp((CrackTicks - NamelessDeityCompat.CrackStart)
+					/ (float)(NamelessDeityCompat.BreakDelay - NamelessDeityCompat.CrackStart), 0f, 1f);
 
 				// The glass pane: crystallizing during the start animation, then a still faceted tint.
 				if (client.ShowOverlay)

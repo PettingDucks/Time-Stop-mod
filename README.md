@@ -16,10 +16,10 @@ How it works:
 - **Time tank:** stopped time works like fuel. A full tank holds 5 seconds, or 3 seconds while a boss is alive. Time resumes on its own when it runs dry, and the tank refills at 80% of the drain speed while time flows.
 - **Cooldown:** a fixed 0.5 second wait after every stop.
 - **Stored damage:** hits on frozen enemies are stored and all land at once when time resumes. Frozen bosses take half damage.
-- **Strain:** spamming time stops as fast as possible cracks your screen. Too much shatters it: you're locked out for 4 seconds and lose 30% of the tank. Normal use never triggers it.
+- **Strain:** restarting time stops right after short ones cracks your screen. Six in a row shatter it: you're locked out for 4 seconds and lose 30% of the tank. How strict it is can be tuned in the config.
 - **Cutscenes:** time resumes on its own during boss cutscenes, with no penalty.
 - **Multiplayer:** one shared time stop for the whole world. Strain is per player.
-- **Wrath of the Gods:** there is one being that time does not apply to.
+- **Wrath of the Gods:** there is one being that time does not apply to. Near him, everything else (his attacks included) freezes for a moment before he breaks the stop, and he may have something to say about it. Trying again right after he breaks it never builds strain.
 
 Visuals:
 - Glass pane over the screen while time is stopped, and a shattering glass break when it resumes
@@ -58,7 +58,15 @@ Use the item, or press the **Toggle time stop** keybind (set it in Settings > Co
 | Cooldown between stops | 0.5 s | Fixed wait after every stop |
 | Stored damage | On | Hits on frozen enemies land when time resumes |
 | Damage to frozen bosses | 0.5 | Damage multiplier on frozen bosses |
+| Nameless Deity break time | 0.5 s | With Wrath of the Gods: how long a stop holds near him before he breaks it (0.1 to 0.5 s) |
 | Strain | On | Spamming cracks and shatters the screen |
+| Strain: short stop | 1 s | A restart only counts as spam if the stop before it was this short |
+| Strain: restart window | 0.4 s | ...and it started within this long after the cooldown ended |
+| Strain: spam restarts to shatter | 6 | How many in a row shatter the screen |
+| Strain: heal delay | 2 s | Cracks start healing this long after the last spam |
+| Strain: heal speed | 0.5 / s | How fast cracks heal after that |
+| Strain: lockout after shattering | 4 s | How long you can't stop time after shattering |
+| Strain: tank lost on shatter | 30% | Share of the time tank lost when the screen shatters |
 | Freeze bosses / town NPCs / dropped items / liquids | On | Turn off to let any of these keep moving |
 | Allow test commands | On | Enables the `/ts...` test commands |
 | NPCs that never freeze | Empty | Add any NPC that has problems being frozen |

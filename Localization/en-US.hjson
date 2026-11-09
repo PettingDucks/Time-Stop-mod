@@ -43,13 +43,53 @@ Mods: {
 					Tooltip: Multiplier on damage dealt to frozen bosses and their body parts. 0.5 is half damage
 				}
 
+				NamelessBreakSeconds: {
+					Label: Nameless Deity break time (seconds)
+					Tooltip: With Wrath of the Gods. How long a time stop holds near the Nameless Deity before he breaks it. Everything but him is frozen, his attacks included. Half a second at most
+				}
+
 				StrainEnabled: {
 					Label: Strain (spam damage)
 					Tooltip:
 						'''
-						Starting time stops again as fast as possible after quick taps cracks the screen. Normal use never does
-						Eight max-speed taps in a row shatter it: locked out for 4 seconds and 30% of the tank is lost
+						Restarting time stops right after short ones cracks your screen. Too many in a row shatter it:
+						you're locked out for a while and lose part of the time tank. The options below tune how strict it is
 						'''
+				}
+
+				StrainQuickTapSeconds: {
+					Label: Strain: short stop (seconds)
+					Tooltip: A restart only counts as spam if the stop before it lasted this long or less. Higher is stricter
+				}
+
+				StrainSpamWindowSeconds: {
+					Label: Strain: restart window (seconds)
+					Tooltip: A restart only counts as spam if it starts within this long after the cooldown ends. Higher is stricter
+				}
+
+				StrainShatterAt: {
+					Label: Strain: spam restarts to shatter
+					Tooltip: How many spam restarts in a row shatter the screen. Lower is stricter
+				}
+
+				StrainHealDelaySeconds: {
+					Label: Strain: heal delay (seconds)
+					Tooltip: Cracks start healing this long after your last spam restart. Higher is stricter
+				}
+
+				StrainHealPerSecond: {
+					Label: Strain: heal speed (per second)
+					Tooltip: How many cracks heal per second once healing starts. Lower is stricter
+				}
+
+				StrainLockoutSeconds: {
+					Label: Strain: lockout after shattering (seconds)
+					Tooltip: How long you can't stop time after your screen shatters
+				}
+
+				StrainFuelLossPercent: {
+					Label: Strain: tank lost on shatter (%)
+					Tooltip: Share of the time tank lost when your screen shatters. 0 turns this off
 				}
 
 				FreezeBosses: {

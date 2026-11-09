@@ -32,6 +32,7 @@ namespace TimeStop
 			public MemberInfo Member;
 			public object Instance;   // for members on a ModSystem instance; null for static members
 			public Check Check;
+			public bool CameraPan;    // camera pans also happen mid-fight, not only in cutscenes
 		}
 
 		private static readonly List<Signal> signals = new();
@@ -39,16 +40,16 @@ namespace TimeStop
 		public override void PostSetupContent() {
 			signals.Clear();
 			Find("NoxusBoss", "activeCutscenes", Check.NotEmpty, "Wrath of the Gods cutscene list");
-			Find("NoxusBoss", "CameraPanInterpolant", Check.AboveZero, "Wrath of the Gods camera pan");
+			Find("NoxusBoss", "CameraPanInterpolant", Check.AboveZero, "Wrath of the Gods camera pan", cameraPan: true);
 			Find("Luminance", "ActiveCutscene", Check.NotNull, "Luminance active cutscene");
-			Find("Luminance", "CameraPanInterpolant", Check.AboveZero, "Luminance camera pan");
+			Find("Luminance", "CameraPanInterpolant", Check.AboveZero, "Luminance camera pan", cameraPan: true);
 		}
 
 		public override void Unload() {
 			signals.Clear();
 		}
 
-		private void Find(string modName, string memberName, Check check, string description) {
+		private void Find(string modName, string memberName, Check check, string description, bool cameraPan = false) {
 			if (!ModLoader.TryGetMod(modName, out Mod other) || other.Code == null)
 				return;
 
@@ -70,7 +71,7 @@ namespace TimeStop
 							continue;
 					}
 
-					signals.Add(new Signal { Description = description, Member = member, Instance = instance, Check = check });
+					signals.Add(new Signal { Description = description, Member = member, Instance = instance, Check = check, CameraPan = cameraPan });
 					return;
 				}
 			}
@@ -109,12 +110,23 @@ namespace TimeStop
 			}
 		}
 
-		public static bool CutsceneActive() {
+		public static bool CutsceneActive() => CutsceneActive(out _);
+
+		// which: the signal that counts as a cutscene right now, for the log.
+		public static bool CutsceneActive(out string which) {
+			which = null;
+			// The Nameless Deity pans the camera all through his fight. Those pans are not cutscenes: while he is
+			// here only the real cutscene lists count, and he deals with time stops himself.
+			bool ignorePans = NamelessDeityCompat.NamelessPresent();
 			foreach (Signal signal in signals) {
+				if (signal.CameraPan && ignorePans)
+					continue;
 				try {
 					object value = signal.Member is FieldInfo field ? field.GetValue(signal.Instance) : ((PropertyInfo)signal.Member).GetValue(signal.Instance);
-					if (IsOn(value, signal.Check))
+					if (IsOn(value, signal.Check)) {
+						which = signal.Description;
 						return true;
+					}
 				}
 				catch {
 					// Never let a lookup problem break the game.
