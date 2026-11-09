@@ -18,7 +18,7 @@ How it works:
 - **Stored damage:** hits on frozen enemies are stored and all land at once when time resumes. Frozen bosses take half damage.
 - **Strain:** restarting time stops right after short ones cracks your screen. Six in a row shatter it: you're locked out for 4 seconds and lose 30% of the tank. How strict it is can be tuned in the config.
 - **Cutscenes:** time resumes on its own during boss cutscenes, with no penalty.
-- **Multiplayer:** one shared time stop for the whole world. Strain is per player.
+- **Multiplayer:** one shared time stop for the whole world. Strain is per player. Not yet tested with two or more players, so please report anything odd.
 - **Wrath of the Gods:** there is one being that time does not apply to. Near him, everything else (his attacks included) freezes for a moment before he breaks the stop, and he may have something to say about it. Trying again right after he breaks it never builds strain.
 
 Visuals:

@@ -62,6 +62,7 @@ namespace TimeStop
 			localStrain.Reset();
 			localLockout = 0;
 			lastStopTicks = int.MaxValue;
+			lastCaster = -1;
 			activeTicks = 0;
 			ShatterEffect.Clear();
 			TimeStopIntro.Clear();
@@ -80,6 +81,9 @@ namespace TimeStop
 
 		private static uint lastEndTick;
 		private static int lastStopTicks = int.MaxValue;
+		// Who started the last stop. Only their own quick taps count against them, so one player's tapping never
+		// puts strain on someone else.
+		private static int lastCaster = -1;
 		private static int activeTicks;
 
 		public static float StrainIntensity => Main.netMode == NetmodeID.MultiplayerClient ? localStrain.Intensity : strains[Main.myPlayer].Intensity;
@@ -118,6 +122,17 @@ namespace TimeStop
 			if (Main.netMode != NetmodeID.Server && who == Main.myPlayer)
 				PlayFractureEffects();
 			Notify(who, "Orion's Half fractures under the strain.");
+		}
+
+		// Server: a player left, so whoever joins into their slot next starts with a clean meter.
+		internal static void ForgetPlayer(int who) {
+			if (who < 0 || who >= strains.Length)
+				return;
+
+			strains[who].Reset();
+			lockouts[who] = 0;
+			if (lastCaster == who)
+				lastCaster = -1;
 		}
 
 		// Server -> that one player: their strain and lockout (and whether they just fractured).
@@ -266,7 +281,8 @@ namespace TimeStop
 			if (TimeStopConfig.Get.StrainEnabled && !afterDeityBreak) {
 				int sinceEnd = (int)Math.Min(int.MaxValue, Main.GameUpdateCount - lastEndTick);
 				float before = strains[who].Value;
-				bool overload = strains[who].RegisterStart(sinceEnd, lastStopTicks, (int)Math.Round(CooldownSeconds * 60f));
+				int previousStop = who == lastCaster ? lastStopTicks : int.MaxValue;
+				bool overload = strains[who].RegisterStart(sinceEnd, previousStop, (int)Math.Round(CooldownSeconds * 60f));
 				if (overload) {
 					Fracture(who);
 					return;
@@ -312,6 +328,7 @@ namespace TimeStop
 			Active = false;
 			lastEndTick = Main.GameUpdateCount;
 			lastStopTicks = activeTicks;
+			lastCaster = CasterWho;
 			CrackTicks = 0;
 			TimeStopNPC.ReleaseAll();   // stored damage lands the moment time resumes
 			LastStopShattered = shattered;

@@ -18,6 +18,11 @@ namespace TimeStop
 			ToggleKey = null;
 		}
 
+		public override void PlayerDisconnect() {
+			if (Main.netMode == Terraria.ID.NetmodeID.Server)
+				TimeStopSystem.ForgetPlayer(Player.whoAmI);
+		}
+
 		public override void ProcessTriggers(TriggersSet triggersSet) {
 			if (ToggleKey == null || !ToggleKey.JustPressed)
 				return;
