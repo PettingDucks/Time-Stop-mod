@@ -13,7 +13,8 @@ namespace TimeStop
 	// "Cutscene" means any of these, checked every tick:
 	//   - Wrath of the Gods has a cutscene in its cutscene list
 	//   - Luminance (the library Wrath of the Gods builds on) has an active cutscene
-	//   - Wrath of the Gods or Luminance is panning the camera for a cinematic moment (boss arrivals, deaths)
+	// Camera pans are deliberately not used: they also happen mid-fight, and after the Nameless Deity fight one can
+	// stay stuck on, which ended every time stop instantly.
 	//
 	// Every signal is found by name when the game loads. If a mod update renames one, that one signal simply
 	// switches off (and the log says so) instead of breaking anything.
@@ -40,9 +41,7 @@ namespace TimeStop
 		public override void PostSetupContent() {
 			signals.Clear();
 			Find("NoxusBoss", "activeCutscenes", Check.NotEmpty, "Wrath of the Gods cutscene list");
-			Find("NoxusBoss", "CameraPanInterpolant", Check.AboveZero, "Wrath of the Gods camera pan", cameraPan: true);
 			Find("Luminance", "ActiveCutscene", Check.NotNull, "Luminance active cutscene");
-			Find("Luminance", "CameraPanInterpolant", Check.AboveZero, "Luminance camera pan", cameraPan: true);
 		}
 
 		public override void Unload() {
